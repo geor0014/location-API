@@ -2185,9 +2185,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 var countriesContainer = document.getElementById("container");
+var btn = document.getElementById("btn");
 
 var renderCountry = function renderCountry(data) {
-  var template = "\n                    <div class=\"w-full md:w-1/2 xl:w-1/3 px-4 \">\n                <div class=\"bg-white rounded-lg overflow-hidden mb-10\">\n                    <img src=\"".concat(data.flag, "\" alt=\"image\"\n                        class=\"w-full\" />\n                    <h2 class=\"px-10 py-3 text-gray-700 font-bold text-3xl\">").concat(data.name, "</h2>\n                    <h2 class=\"px-10 text-gray-500 font-bold text-xl\">").concat(data.region, "</h2>\n\n                    <div class=\"p-8 sm:p-9 md:p-7 xl:p-5 text-center\">\n                        <div class=\"flex items-center justify-between mt-2 mx-6\">\n                            <h3 class=\"text-gray-700 font-bold text-lg -ml-3 \">Native Name</h3>\n                            <h3 class=\"flex text-gray-700 font-bold\">\n                                ").concat(data.nativeName, "\n                            </h3>\n                        </div>\n                        <div class=\"flex items-center justify-between mt-2 mx-6\">\n                            <h3 class=\"text-gray-700 font-bold text-lg -ml-3 \">Language</h3>\n                            <h3 class=\"flex text-gray-700 font-bold\">\n                                ").concat(data.languages[0].name, "\n                            </h3>\n                        </div>\n                        <div class=\"flex items-center justify-between mt-2 mx-6\">\n                            <h3 class=\"text-gray-700 font-bold text-lg -ml-3 \">Population:</h3>\n                            <h3 class=\"flex text-gray-700 font-bold\">\n                                ").concat(data.population / 1000000, " m\n                            </h3>\n                        </div>\n                        <div class=\"flex items-center justify-between mt-2 mx-6\">\n                            <h3 class=\"text-gray-700 font-bold text-lg -ml-3 \">Currency:</h3>\n                            <h3 class=\"flex text-gray-700 font-bold\">\n                                ").concat(data.currencies[0].name, "\n                            </h3>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ");
+  var neihgbour = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var template = "\n                    <div class=\"w-full md:w-1/2 ".concat(neihgbour ? "xl:w-1/4 xl:h-11" : "xl:w-1/3", " px-4 \">\n                <div class=\"bg-white rounded-lg overflow-hidden mb-10\">\n                    <img src=\"").concat(data.flag, "\" alt=\"image\"\n                        class=\"w-full\" />\n                    <h2 class=\"px-10 py-3 text-gray-700 font-bold text-3xl\">").concat(data.name, "</h2>\n                    <h2 class=\"px-10 text-gray-500 font-bold text-xl\">").concat(data.region, "</h2>\n\n                    <div class=\"p-8 sm:p-9 md:p-7 xl:p-5 text-center\">\n                        <div class=\"flex items-center justify-between mt-2 mx-6\">\n                            <h3 class=\"text-gray-700 font-bold text-lg -ml-3 \">Native Name</h3>\n                            <h3 class=\"flex text-gray-700 font-bold\">\n                                ").concat(data.nativeName, "\n                            </h3>\n                        </div>\n                        <div class=\"flex items-center justify-between mt-2 mx-6\">\n                            <h3 class=\"text-gray-700 font-bold text-lg -ml-3 \">Language</h3>\n                            <h3 class=\"flex text-gray-700 font-bold\">\n                                ").concat(data.languages[0].name, "\n                            </h3>\n                        </div>\n                        <div class=\"flex items-center justify-between mt-2 mx-6\">\n                            <h3 class=\"text-gray-700 font-bold text-lg -ml-3 \">Population:</h3>\n                            <h3 class=\"flex text-gray-700 font-bold\">\n                                ").concat(data.population / 1000000, " m\n                            </h3>\n                        </div>\n                        <div class=\"flex items-center justify-between mt-2 mx-6\">\n                            <h3 class=\"text-gray-700 font-bold text-lg -ml-3 \">Currency:</h3>\n                            <h3 class=\"flex text-gray-700 font-bold\">\n                                ").concat(data.currencies[0].name, "\n                            </h3>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ");
   countriesContainer.insertAdjacentHTML("beforeend", template);
 };
 
@@ -2199,49 +2201,97 @@ var getPosition = function getPosition() {
 
 var whereAmI = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-    var position, _position$coords, lat, lng, reverseGeo, dataGeo, res, _yield$res$json, _yield$res$json2, data;
+    var position, _position$coords, lat, lng, reverseGeo, dataGeo, res, _yield$res$json, _yield$res$json2, data, neighbour, resNeighbour, dataNeighbour;
 
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
+            _context.prev = 0;
+            _context.next = 3;
             return getPosition();
 
-          case 2:
+          case 3:
             position = _context.sent;
             _position$coords = position.coords, lat = _position$coords.latitude, lng = _position$coords.longitude; //Reverse Geocoding
 
-            _context.next = 6;
+            _context.next = 7;
             return fetch("https://geocode.xyz/".concat(lat, ",").concat(lng, "?geoit=json"));
 
-          case 6:
+          case 7:
             reverseGeo = _context.sent;
-            _context.next = 9;
+
+            if (reverseGeo.ok) {
+              _context.next = 10;
+              break;
+            }
+
+            throw new Error("Something went wrong, could not get location");
+
+          case 10:
+            _context.next = 12;
             return reverseGeo.json();
 
-          case 9:
+          case 12:
             dataGeo = _context.sent;
-            _context.next = 12;
+            _context.next = 15;
             return fetch("https://restcountries.com/v2/name/".concat(dataGeo.country));
 
-          case 12:
+          case 15:
             res = _context.sent;
-            _context.next = 15;
+
+            if (res.ok) {
+              _context.next = 18;
+              break;
+            }
+
+            throw new Error("Something went wrong, could not get country");
+
+          case 18:
+            _context.next = 20;
             return res.json();
 
-          case 15:
+          case 20:
             _yield$res$json = _context.sent;
             _yield$res$json2 = _slicedToArray(_yield$res$json, 1);
             data = _yield$res$json2[0];
-            renderCountry(data);
+            renderCountry(data); //Neighbours
 
-          case 19:
+            neighbour = data.borders[0].toLowerCase();
+
+            if (neighbour) {
+              _context.next = 27;
+              break;
+            }
+
+            return _context.abrupt("return");
+
+          case 27:
+            _context.next = 29;
+            return fetch("https://restcountries.com/v2/alpha/".concat(neighbour));
+
+          case 29:
+            resNeighbour = _context.sent;
+            _context.next = 32;
+            return resNeighbour.json();
+
+          case 32:
+            dataNeighbour = _context.sent;
+            renderCountry(dataNeighbour, true);
+            _context.next = 39;
+            break;
+
+          case 36:
+            _context.prev = 36;
+            _context.t0 = _context["catch"](0);
+            console.error(_context.t0);
+
+          case 39:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee);
+    }, _callee, null, [[0, 36]]);
   }));
 
   return function whereAmI() {
@@ -2249,19 +2299,7 @@ var whereAmI = /*#__PURE__*/function () {
   };
 }();
 
-whereAmI(); // const asyncCall = async function (country) {
-//     try {
-//         const res = await fetch(`https://restcountries.com/v2/name/${country}`);
-//         if (!res.ok) throw new Error("Problem getting country");
-//         const [data] = await res.json();
-//         renderCountry(data);
-//         console.log(data);
-//     } catch (err) {
-//         console.log(`${err}`);
-//         // Reject promise returned from async function
-//         throw err;
-//     }
-// };
+btn.addEventListener("click", whereAmI);
 
 /***/ }),
 

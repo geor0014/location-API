@@ -1,10 +1,13 @@
 require("./bootstrap");
 
 const countriesContainer = document.getElementById("container");
+const btn = document.getElementById("btn");
 
-const renderCountry = function (data) {
+const renderCountry = function (data, neihgbour = false) {
     const template = `
-                    <div class="w-full md:w-1/2 xl:w-1/3 px-4 ">
+                    <div class="w-full md:w-1/2 ${
+                        neihgbour ? "xl:w-1/4 xl:h-11" : "xl:w-1/3"
+                    } px-4 ">
                 <div class="bg-white rounded-lg overflow-hidden mb-10">
                     <img src="${data.flag}" alt="image"
                         class="w-full" />
@@ -55,40 +58,46 @@ const getPosition = function () {
 };
 
 const whereAmI = async function () {
-    //Geolocation
-    const position = await getPosition();
-    const { latitude: lat, longitude: lng } = position.coords;
+    try {
+        //Geolocation
+        const position = await getPosition();
+        const { latitude: lat, longitude: lng } = position.coords;
 
-    //Reverse Geocoding
-    const reverseGeo = await fetch(
-        `https://geocode.xyz/${lat},${lng}?geoit=json`
-    );
-    const dataGeo = await reverseGeo.json();
+        //Reverse Geocoding
+        const reverseGeo = await fetch(
+            `https://geocode.xyz/${lat},${lng}?geoit=json`
+        );
 
-    //Country
-    const res = await fetch(
-        `https://restcountries.com/v2/name/${dataGeo.country}`
-    );
-    const [data] = await res.json();
+        if (!reverseGeo.ok)
+            throw new Error("Something went wrong, could not get location");
 
-    renderCountry(data);
+        const dataGeo = await reverseGeo.json();
+
+        //Country
+        const res = await fetch(
+            `https://restcountries.com/v2/name/${dataGeo.country}`
+        );
+        if (!res.ok)
+            throw new Error("Something went wrong, could not get country");
+
+        const [data] = await res.json();
+
+        renderCountry(data);
+
+        //Neighbours
+        const neighbour = data.borders[0].toLowerCase();
+
+        if (!neighbour) return;
+
+        const resNeighbour = await fetch(
+            `https://restcountries.com/v2/alpha/${neighbour}`
+        );
+
+        const dataNeighbour = await resNeighbour.json();
+        renderCountry(dataNeighbour, true);
+    } catch (err) {
+        console.error(err);
+    }
 };
-whereAmI();
 
-// const asyncCall = async function (country) {
-//     try {
-//         const res = await fetch(`https://restcountries.com/v2/name/${country}`);
-
-//         if (!res.ok) throw new Error("Problem getting country");
-
-//         const [data] = await res.json();
-
-//         renderCountry(data);
-
-//         console.log(data);
-//     } catch (err) {
-//         console.log(`${err}`);
-//         // Reject promise returned from async function
-//         throw err;
-//     }
-// };
+btn.addEventListener("click", whereAmI);

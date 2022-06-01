@@ -56,8 +56,9 @@
         <div class="flex justify-center">
 
             <button
-                class="bg-transparent hover:bg-blue-700 text-blue-700 font-bold hover:text-white py-2 px-4 border border-blue-700 hover:border-transparent rounded">
-                Button
+                class="bg-transparent hover:bg-blue-700 text-blue-700 font-bold hover:text-white py-2 px-4 border border-blue-700 hover:border-transparent rounded"
+                id="btn">
+                Get My Location
             </button>
         </div>
         {{-- END BUTTON --}}
